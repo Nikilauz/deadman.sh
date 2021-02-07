@@ -1,0 +1,37 @@
+#!/bin/bash
+
+GFOLDER=/usr/local
+DEAMON_FILE=$GFOLDER/bin/deadmans_daemon.sh
+
+LFOLDER=~/.deadman
+ID_FILE=$LFOLDER/id.txt
+CONFIG=$LFOLDER/minutes_to_death.txt
+
+mkdir -p $LFOLDER
+if ! test -f $CONFIG; then echo 10 > $CONFIG; fi
+if ! test -f $ID_FILE; then > $ID_FILE; fi
+
+PID=`cat $ID_FILE`
+
+if [[ $PID == "" ]]
+then
+    STATE=" not"
+    ACTION="start"
+else
+    ACTION="stop"
+fi
+
+zenity --question --cancel-label="Cancel" --ok-label="Ok" --title="deadman" --width=300 --icon-name=face-devilish \
+    --text="The deadman's daemon is currently$STATE running.\nDo you want to $ACTION it?"
+
+if [[ $? == 0 ]]
+then
+    if [[ $PID == "" ]]
+    then
+        $DEAMON_FILE $ID_FILE `cat $CONFIG` > /dev/null &
+    else
+        kill $PID
+        rm $ID_FILE
+    fi
+fi
+
