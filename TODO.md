@@ -3,3 +3,4 @@
 - desktop starter
 - installer: option to remove coffin
 - readme
+- time-dependent reminder
