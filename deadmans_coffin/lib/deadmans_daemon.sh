@@ -1,33 +1,32 @@
 #!/bin/bash
 
-TIMER=20
-TIMEOUT=$(( 60 * $2 ))
-ALARM=/usr/local/share/deadman/*.ogg
+function get_arg() {
+    local RESULT="$(echo $1 | grep -E -o -e "$2.+")"
+    ( (( ${#RESULT} > 0 )) && ( echo ${RESULT:${#2}} | awk '{printf("%s", $1)}' ) ) || echo $3
+}
 
 function get_pointer() {
     while read
     do
         if [[ `echo $REPLY` =~ "slave pointer" ]]
         then
-            POINTER+=(${REPLY:50:2})
+            local ID=$(echo $REPLY | grep -E -o -e "id=.+" | awk '{printf("%s", $1)}')
+            POINTER+=(${ID:3})
         fi
     done < <(xinput)
 }
 
 function alarm() {
-    pactl set-sink-mute @DEFAULT_SINK@ 0
     for (( i=1; `detect_mouse_move` == 0; i++ ))
     do
-        pactl set-sink-volume @DEFAULT_SINK@ `echo "+"$((i * 5))"%"`
-        paplay $ALARM
-        pactl set-sink-volume @DEFAULT_SINK@ `echo "-"$((i * 5))"%"`
+        paplay --volume $((i*10000)) $ALARM_FILE
     done
 }
 
 function detect_mouse_move() {
     for p in "${POINTER[@]}"
     do
-        res+=$(timeout `echo 0.$((10/${#POINTER[@]}))` xinput test $p)
+        res+=$(timeout `echo 0.$(( 10 / ${#POINTER[@]} ))` xinput test $p)
     done
     if [[ ${#res} > 0 ]]
     then
@@ -38,32 +37,37 @@ function detect_mouse_move() {
 }
 
 function countdown() {
-    for i in $(eval echo "{1..$TIMER}")
+    for i in $(eval echo "{1..$COUNTDOWN}")
     do
         if [[ `detect_mouse_move` == 1 ]]
         then
             echo 100
             return
         fi
-        if [ $i == $TIMER ]
+        if [ $i == $COUNTDOWN ]
         then
             echo 100
             alarm
             return
         fi
-        echo $(($i * (100 / $TIMER)))
+        echo $(($i * (100 / $COUNTDOWN)))
     done
 }
 
-echo $$ > $1
+COUNTDOWN=$(get_arg "`echo "$@"`" "-c " "20")
+TIMER=$(( 60 * $(get_arg "`echo "$@"`" "-t " "5") ))
+ALARM_FILE=$(get_arg "`echo "$@"`" "--alarm-file=")
+ID_FILE=$(get_arg "`echo "$@"`" "--id-file=")
+
+(echo $$ > "$ID_FILE") 2>/dev/null
 get_pointer
 
 while true
 do
     INACTIVE=0
-    while (( INACTIVE < TIMEOUT ))
+    while (( INACTIVE < TIMER ))
     do
-        if [[ `detect_mouse_move` == 1 ]]
+        if [[ $( (detect_mouse_move & sleep 1 ; kill $!) 2>/dev/null ) == 1 ]]
         then
             INACTIVE=0
         else
@@ -76,4 +80,3 @@ do
     (sleep 1 && wmctrl -F -a "deadman" -b add,above) &(countdown | zenity --progress --auto-close \
         --no-cancel --width=200 --title="deadman" --text="Hey, are you still alive?\nMove your mouse!")
 done
-

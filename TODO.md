@@ -1,5 +1,6 @@
 # todo
 - configuration via options
 - desktop starter
-- installer: option to remove coffin
+- push-notification
 - readme
+- exact countdown

@@ -27,10 +27,9 @@ if [[ $? == 0 ]]
 then
     if [[ $PID == "" ]]
     then
-        $DEAMON_FILE $ID_FILE `cat $CONFIG` > /dev/null &
+        $DEAMON_FILE --id-file=$ID_FILE -t `cat $CONFIG` --alarm-file=$ALARM_FILE > /dev/null &
     else
         kill $PID
         rm $ID_FILE
     fi
 fi
-
