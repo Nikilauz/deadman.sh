@@ -2,14 +2,14 @@
 
 SOURCE="https://raw.githubusercontent.com/Nikilauz/deadman.sh/main"
 MAIN=deadman
-DEAMON=deadmans_deamon.sh
+DAEMON=deadmans_daemon.sh
 ALARM=alarm.ogg
 BIN=/usr/local/bin
 SHARE=/usr/local/share/deadman
 
-rm -f $BIN/$MAIN $BIN/$DEAMON
-wget -P $BIN $SOURCE/$MAIN $SOURCE/$DEAMON
-chmod 755 $BIN/$MAIN $BIN/$DEAMON
+rm -f $BIN/$MAIN $BIN/$DAEMON
+wget -P $BIN $SOURCE/$MAIN $SOURCE/$DAEMON
+chmod 755 $BIN/$MAIN $BIN/$DAEMON
 
 rm -r -f $SHARE
 mkdir -p $SHARE
