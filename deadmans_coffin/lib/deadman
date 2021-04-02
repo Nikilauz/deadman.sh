@@ -1,17 +1,16 @@
 #!/bin/bash
 
-GFOLDER=/usr/local
-DEAMON_FILE=$GFOLDER/bin/deadmans_daemon.sh
+SYSTEM_FOLDER=/usr/local
+DEAMON_FILE=$SYSTEM_FOLDER/bin/deadmans_daemon.sh
+ALARM_FILE=$SYSTEM_FOLDER/share/deadman/alarm.ogg
 
-LFOLDER=~/.deadman
-ID_FILE=$LFOLDER/id.txt
-CONFIG=$LFOLDER/minutes_to_death.txt
+CACHE_FOLDER=~/.cache/deadman
+ID_FILE=$CACHE_FOLDER/id.txt
 
-mkdir -p $LFOLDER
-if ! test -f $CONFIG; then echo 10 > $CONFIG; fi
-if ! test -f $ID_FILE; then > $ID_FILE; fi
+CONFIG_FOLDER=~/.config/deadman
+CONFIG=$CONFIG_FOLDER/minutes_to_death.txt
 
-PID=`cat $ID_FILE`
+PID=`cat $ID_FILE 2>/dev/null`
 
 if [[ $PID == "" ]]
 then
