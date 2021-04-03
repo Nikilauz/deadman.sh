@@ -34,6 +34,5 @@ if ! (($?)); then
     else
         $DEAMON_FILE --alarm-file=$ALARM_FILE -c $COUNTDOWN -t $TIMER >/dev/null &
         echo $! > $ID_FILE
-        chmod 777 $ID_FILE
     fi
 fi
