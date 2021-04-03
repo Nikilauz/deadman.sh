@@ -5,9 +5,11 @@ DEAMON_FILE=$SYSTEM_FOLDER/bin/deadmans_daemon.sh
 ALARM_FILE=$SYSTEM_FOLDER/share/deadman/alarm.ogg
 
 CACHE_FOLDER=~/.cache/deadman
+mkdir -p $CACHE_FOLDER
 ID_FILE=$CACHE_FOLDER/id.txt
 
 CONFIG_FOLDER=~/.config/deadman
+mkdir -p $CONFIG_FOLDER
 CONFIG=$CONFIG_FOLDER/minutes_to_death.txt
 
 PID=`cat $ID_FILE 2>/dev/null`
@@ -27,7 +29,8 @@ if [[ $? == 0 ]]
 then
     if [[ $PID == "" ]]
     then
-        $DEAMON_FILE --id-file=$ID_FILE --alarm-file=$ALARM_FILE > /dev/null &
+        $DEAMON_FILE --alarm-file=$ALARM_FILE > /dev/null &
+        echo $! > $ID_FILE
     else
         kill $PID
         rm $ID_FILE

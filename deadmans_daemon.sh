@@ -57,9 +57,7 @@ function countdown() {
 COUNTDOWN=$(get_arg "`echo "$@"`" "-c " "20")
 TIMER=$(( 60 * $(get_arg "`echo "$@"`" "-t " "5") ))
 ALARM_FILE=$(get_arg "`echo "$@"`" "--alarm-file=")
-ID_FILE=$(get_arg "`echo "$@"`" "--id-file=")
 
-(echo $$ > "$ID_FILE") 2>/dev/null
 get_pointer
 
 while true
