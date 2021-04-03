@@ -17,7 +17,6 @@ wget -P $SHARE $SOURCE/$ALARM
 
 zenity --question --cancel-label="Ok" --ok-label="Run deadman" --title="deadman" --width=250 --icon-name=face-devilish \
     --text="Everything is done - thanks for installing!"
-if [[ $? != 1 ]]
-then
+if ! (($?)); then
     deadman
 fi

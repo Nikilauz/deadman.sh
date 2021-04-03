@@ -10,12 +10,12 @@ ID_FILE=$CACHE_FOLDER/id.txt
 
 CONFIG_FOLDER=~/.config/deadman
 mkdir -p $CONFIG_FOLDER
-CONFIG=$CONFIG_FOLDER/minutes_to_death.txt
+COUNTDOWN_FILE=$CONFIG_FOLDER/final_countdown.txt
 
-PID=`cat $ID_FILE 2>/dev/null`
+PID=$(cat $ID_FILE 2>/dev/null)
+COUNTDOWN=$(cat $COUNTDOWN_FILE 2>/dev/null)
 
-if [[ $PID ]]
-then
+if [[ $PID ]]; then
     ACTION="stop"
 else
     STATE=" not"
@@ -23,16 +23,14 @@ else
 fi
 
 zenity --question --cancel-label="Cancel" --ok-label="Ok" --title="deadman" --width=300 --icon-name=face-devilish \
-    --text="The deadman's daemon is currently$STATE running.\nDo you want to $ACTION it?"
+    --text="The deadman's daemon is currently$STATE running.\nDo you want to make him $ACTION?"
 
-if [[ $? == 0 ]]
-then
-    if [[ $PID ]]
-    then
+if ! (($?)); then
+    if [[ $PID ]]; then
         kill $PID
         rm $ID_FILE
     else
-        $DEAMON_FILE --alarm-file=$ALARM_FILE > /dev/null &
-        echo $! > $ID_FILE
+        $DEAMON_FILE --alarm-file=$ALARM_FILE -c $COUNTDOWN >/dev/null &
+        echo $! >$ID_FILE
     fi
 fi
