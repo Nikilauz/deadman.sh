@@ -11,9 +11,11 @@ ID_FILE=$CACHE_FOLDER/id.txt
 CONFIG_FOLDER=~/.config/deadman
 mkdir -p $CONFIG_FOLDER
 COUNTDOWN_FILE=$CONFIG_FOLDER/final_countdown.txt
+TIMER_FILE=$CONFIG_FOLDER/deadline.txt
 
 PID=$(cat $ID_FILE 2>/dev/null)
 COUNTDOWN=$(cat $COUNTDOWN_FILE 2>/dev/null)
+TIMER=$(cat $TIMER_FILE 2>/dev/null)
 
 if [[ $PID ]]; then
     ACTION="stop"
@@ -30,7 +32,7 @@ if ! (($?)); then
         kill $PID
         rm $ID_FILE
     else
-        $DEAMON_FILE --alarm-file=$ALARM_FILE -c $COUNTDOWN >/dev/null &
+        $DEAMON_FILE --alarm-file=$ALARM_FILE -c $COUNTDOWN -t $TIMER >/dev/null &
         echo $! >$ID_FILE
     fi
 fi
