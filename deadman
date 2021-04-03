@@ -30,7 +30,7 @@ zenity --question --cancel-label="Cancel" --ok-label="Ok" --title="deadman" --wi
 if ! (($?)); then
     if [[ $PID ]]; then
         kill $PID
-        rm $ID_FILE
+        rm -f $ID_FILE
     else
         $DEAMON_FILE --alarm-file=$ALARM_FILE -c $COUNTDOWN -t $TIMER >/dev/null &
         echo $! >$ID_FILE
