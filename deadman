@@ -14,12 +14,12 @@ CONFIG=$CONFIG_FOLDER/minutes_to_death.txt
 
 PID=`cat $ID_FILE 2>/dev/null`
 
-if [[ $PID == "" ]]
+if [[ $PID ]]
 then
+    ACTION="stop"
+else
     STATE=" not"
     ACTION="start"
-else
-    ACTION="stop"
 fi
 
 zenity --question --cancel-label="Cancel" --ok-label="Ok" --title="deadman" --width=300 --icon-name=face-devilish \
@@ -27,12 +27,12 @@ zenity --question --cancel-label="Cancel" --ok-label="Ok" --title="deadman" --wi
 
 if [[ $? == 0 ]]
 then
-    if [[ $PID == "" ]]
+    if [[ $PID ]]
     then
-        $DEAMON_FILE --alarm-file=$ALARM_FILE > /dev/null &
-        echo $! > $ID_FILE
-    else
         kill $PID
         rm $ID_FILE
+    else
+        $DEAMON_FILE --alarm-file=$ALARM_FILE > /dev/null &
+        echo $! > $ID_FILE
     fi
 fi
