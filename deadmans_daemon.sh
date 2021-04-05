@@ -17,7 +17,7 @@ function get_pointer() {
 function alarm() {
     for ((i = 1; $(detect_mouse_move) == 0; i++)); do
         paplay --volume $(($i * 10000)) $ALARM_FILE
-        (( i == 42 )) && cvlc https://tinyurl.com/8dz9z78p --play-and-exit
+        ((i == 42)) && cvlc https://tinyurl.com/8dz9z78p --play-and-exit
     done
 }
 
@@ -66,6 +66,7 @@ while true; do
     while ((INACTIVE < TIMER)); do
         if (($(detect_mouse_move))); then
             INACTIVE=0
+            echo
         else
             xdg-screensaver reset
             ((INACTIVE++))
@@ -75,5 +76,5 @@ while true; do
     printf "\n"
     (sleep 1 && wmctrl -F -a "deadman" -b add,above) &
     (countdown | zenity --progress --auto-close \
-        --no-cancel --width=200 --title="deadman" --text="Hey, are you still alive?\nMove your mouse!")
+        --no-cancel --width=200 --title="deadman" --text="Hey, are you still alive?\nMove your mouse!" 2>/dev/null)
 done
