@@ -14,8 +14,8 @@ COUNTDOWN_FILE=$CONFIG_FOLDER/final_countdown.txt
 TIMER_FILE=$CONFIG_FOLDER/deadline.txt
 
 PID=$(cat $ID_FILE 2>/dev/null)
-COUNTDOWN=$(cat $COUNTDOWN_FILE 2>/dev/null)
-TIMER=$(cat $TIMER_FILE 2>/dev/null)
+test -s $COUNTDOWN_FILE && COUNTDOWN="-c $(cat $COUNTDOWN_FILE 2>/dev/null)"
+test -s $TIMER_FILE && TIMER="-t $(cat $TIMER_FILE 2>/dev/null)"
 
 if [[ $PID ]]; then
     ACTION="stop"
@@ -32,7 +32,7 @@ if ! (($?)); then
         kill $PID
         rm -f $ID_FILE
     else
-        $DEAMON_FILE --alarm-file=$ALARM_FILE -c $COUNTDOWN -t $TIMER >/dev/null &
+        $DEAMON_FILE --alarm-file=$ALARM_FILE $COUNTDOWN $TIMER >/dev/null &
         echo $! > $ID_FILE
     fi
 fi
